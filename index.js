@@ -10,8 +10,7 @@ app.use(express.static('public'));
 const ML_CLIENT_ID = '8527794874327769';
 const ML_CLIENT_SECRET = '47NZaXl4kxlXMONrMetsk0ZvYtwdKapZ';
 const ML_API = 'https://api.mercadolibre.com';
-const BASE_URL = process.env.RENDER_EXTERNAL_URL || 'http://localhost:3000';
-const ML_REDIRECT_URI = BASE_URL + '/auth/callback';
+const ML_REDIRECT_URI = 'https://majoleshop-dashboard.onrender.com/auth/callback';
 
 let tokenData = null;
 
