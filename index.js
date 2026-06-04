@@ -21,15 +21,22 @@ app.get('/auth/login', (req, res) => {
 
 app.get('/auth/callback', async (req, res) => {
   const { code } = req.query;
+  if (!code) return res.redirect('/?auth=error');
   try {
-    const r = await axios.post(`${ML_API}/oauth/token`, {
-      grant_type: 'authorization_code', client_id: ML_CLIENT_ID,
-      client_secret: ML_CLIENT_SECRET, code, redirect_uri: ML_REDIRECT_URI
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('client_id', ML_CLIENT_ID);
+    params.append('client_secret', ML_CLIENT_SECRET);
+    params.append('code', code);
+    params.append('redirect_uri', ML_REDIRECT_URI);
+
+    const r = await axios.post(`${ML_API}/oauth/token`, params.toString(), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' }
     });
     tokenData = { ...r.data, created_date: Date.now() / 1000 };
     res.redirect('/?auth=success');
   } catch (err) {
-    console.error('Auth error:', err.response?.data || err.message);
+    console.error('Auth error:', JSON.stringify(err.response?.data || err.message));
     res.redirect('/?auth=error');
   }
 });
@@ -38,9 +45,13 @@ async function getToken() {
   if (!tokenData) return null;
   if (Date.now() / 1000 < tokenData.created_date + tokenData.expires_in - 60) return tokenData.access_token;
   try {
-    const r = await axios.post(`${ML_API}/oauth/token`, {
-      grant_type: 'refresh_token', client_id: ML_CLIENT_ID,
-      client_secret: ML_CLIENT_SECRET, refresh_token: tokenData.refresh_token
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('client_id', ML_CLIENT_ID);
+    params.append('client_secret', ML_CLIENT_SECRET);
+    params.append('refresh_token', tokenData.refresh_token);
+    const r = await axios.post(`${ML_API}/oauth/token`, params.toString(), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' }
     });
     tokenData = { ...r.data, created_date: Date.now() / 1000 };
     return tokenData.access_token;
