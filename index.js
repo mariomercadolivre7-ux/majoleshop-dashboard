@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const ML_CLIENT_ID = '8527794874327769';
-const ML_CLIENT_SECRET = '47NZaXl4kxlXMONrMetsk0ZvYtwdKapZ';
+const ML_CLIENT_SECRET = 'tIDSso7vWrwi4eIZY9RYt9G8au1FKxCO';
 const ML_API = 'https://api.mercadolibre.com';
 const ML_REDIRECT_URI = 'https://majoleshop-dashboard.onrender.com/auth/callback';
 
